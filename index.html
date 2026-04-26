@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahil Singh | Food Technology Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-dark: #1a4731;
+    --green-mid: #2d7a4f;
+    --green-light: #4caf7d;
+    --green-pale: #e8f5ed;
+    --green-accent: #00c96e;
+    --white: #ffffff;
+    --off-white: #f7faf8;
+    --text-dark: #0e1f17;
+    --text-mid: #3a5a45;
+    --text-light: #7aaa8d;
+    --border: #c8e6d4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── GRAIN TEXTURE OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 9997;
+    pointer-events: none;
+    opacity: 0.035;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green-accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .cursor-ring {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--green-accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.6;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, background 0.3s ease, opacity 0.3s ease;
+  }
+
+  .cursor-dot.hovering {
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  .cursor-ring.hovering {
+    width: 90px;
+    height: 90px;
+    background: rgba(0, 201, 110, 0.1);
+    border-color: rgba(0, 201, 110, 0.4);
+    opacity: 0.8;
+  }
+
+  /* Hide custom cursor on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor-dot, .cursor-ring { display: none; }
+  }
+
+  /* ── PAGE TRANSITION CURTAIN ── */
+  #transition-curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: var(--green-dark);
+    pointer-events: none;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    will-change: transform;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green-dark);
+    letter-spacing: -0.5px;
+  }
+
+  .nav-logo span { color: var(--green-accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-mid);
+    padding: 8px 16px;
+    border-radius: 100px;
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    background: var(--green-dark);
+    color: white;
+  }
+
+  /* ── MARQUEE STRIP ── */
+  .marquee-strip {
+    position: fixed;
+    top: 64px;
+    left: 0; right: 0;
+    height: 36px;
+    background: var(--green-accent);
+    z-index: 99;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .marquee-strip.visible {
+    opacity: 1;
+  }
+
+  .marquee-track {
+    display: flex;
+    white-space: nowrap;
+    animation: marqueeScroll 25s linear infinite;
+  }
+
+  .marquee-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--green-dark);
+    font-weight: 700;
+    padding-right: 0;
+  }
+
+  @keyframes marqueeScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── PAGES ── */
+  .page {
+    min-height: 100vh;
+    padding-top: 64px;
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .page.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══════════════════════════════
+     HOME PAGE
+  ══════════════════════════════ */
+  #home {
+    background: var(--green-dark);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #home.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #home::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,201,110,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(77,175,125,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .home-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  /* ── AMBIENT BLOB ── */
+  .ambient-blob {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,201,110,0.12) 0%, transparent 70%);
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+  }
+
+  .home-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px 24px;
+    max-width: 800px;
+  }
+
+  .home-tag {
+    display: inline-block;
+    background: rgba(0,201,110,0.15);
+    border: 1px solid rgba(0,201,110,0.35);
+    color: var(--green-accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    opacity: 0;
+    filter: blur(8px);
+    transition: opacity 0.8s ease, filter 0.8s ease;
+  }
+
+  .home-tag.revealed {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  .home-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    color: white;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+  }
+
+  .home-name .letter-wrap {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+
+  .home-name .letter {
+    display: inline-block;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .home-name .letter.revealed {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .home-name span {
+    color: var(--green-accent);
+    display: block;
+  }
+
+  .home-desc {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 40px;
+    font-weight: 300;
+    opacity: 0;
+    filter: blur(8px);
+    transition: opacity 0.8s ease, filter 0.8s ease;
+  }
+
+  .home-desc.revealed {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  .home-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--green-accent);
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 14px 32px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: all 0.25s;
+    text-decoration: none;
+    opacity: 0;
+    filter: blur(8px);
+  }
+
+  .home-cta.revealed {
+    opacity: 1;
+    filter: blur(0);
+    transition: opacity 0.8s ease, filter 0.8s ease, background 0.25s, transform 0.3s ease, box-shadow 0.25s;
+  }
+
+  .home-cta:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,201,110,0.3);
+  }
+
+  .home-scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.3);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .home-scroll-hint.revealed {
+    opacity: 1;
+    animation: bounce 2s infinite;
+  }
+
+  .home-scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* Floating leaf deco */
+  .leaf {
+    position: absolute;
+    opacity: 0.06;
+    font-size: 120px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .leaf-1 { top: 10%; left: 5%; transform: rotate(-30deg); font-size: 180px; }
+  .leaf-2 { bottom: 15%; right: 4%; transform: rotate(20deg); font-size: 140px; }
+  .leaf-3 { top: 55%; left: 2%; transform: rotate(10deg); font-size: 80px; }
+
+  /* ══════════════════════════════
+     ABOUT PAGE
+  ══════════════════════════════ */
+  #about {
+    background: var(--white);
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 48px;
+  }
+
+  .section-header {
+    margin-bottom: 56px;
+  }
+
+  .section-kicker {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green-accent);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    color: var(--green-dark);
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--green-mid);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .about-bio {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text-mid);
+  }
+
+  .about-bio p { margin-bottom: 20px; }
+
+  .about-bio strong { color: var(--green-dark); font-weight: 600; }
+
+  .about-sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+  .info-card {
+    background: var(--green-pale);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .info-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 8px;
+  }
+
+  .info-card-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .skills-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .chip {
+    background: var(--green-dark);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: 0.2px;
+  }
+
+  .chip.outline {
+    background: transparent;
+    border: 1.5px solid var(--green-mid);
+    color: var(--green-mid);
+  }
+
+  /* ══════════════════════════════
+     ACADEMICS PAGE
+  ══════════════════════════════ */
+  #academics {
+    background: var(--off-white);
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    margin-bottom: 56px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--green-accent), var(--green-mid), var(--border));
+    border-radius: 2px;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 36px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    transition: box-shadow 0.25s;
+  }
+
+  .timeline-item:hover {
+    box-shadow: 0 8px 32px rgba(26,71,49,0.1);
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -39px;
+    top: 28px;
+    width: 14px; height: 14px;
+    background: var(--green-accent);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--green-accent);
+  }
+
+  .timeline-year {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--green-accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .timeline-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 4px;
+  }
+
+  .timeline-sub {
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+
+  .skills-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 24px;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .skill-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.25s;
+  }
+
+  .skill-card:hover {
+    border-color: var(--green-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,201,110,0.12);
+  }
+
+  .skill-icon {
+    width: 40px; height: 40px;
+    background: var(--green-pale);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .skill-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--green-dark);
+  }
+
+  /* ══════════════════════════════
+     ACHIEVEMENTS PAGE
+  ══════════════════════════════ */
+  #achievements {
+    background: var(--white);
+  }
+
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 56px;
+  }
+
+  .achievement-card {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .achievement-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--green-accent), var(--green-mid));
+  }
+
+  .achievement-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(26,71,49,0.12);
+  }
+
+  .achievement-icon {
+    font-size: 2.4rem;
+    margin-bottom: 16px;
+  }
+
+  .achievement-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+  }
+
+  .achievement-desc {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  .achievement-badge {
+    display: inline-block;
+    background: var(--green-pale);
+    border: 1px solid var(--border);
+    color: var(--green-mid);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-top: 16px;
+  }
+
+  .hobbies-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .hobby-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--green-dark);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  /* ══════════════════════════════
+     VISION PAGE
+  ══════════════════════════════ */
+  #vision {
+    background: var(--green-dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #vision::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 60% at 90% 10%, rgba(0,201,110,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 5% 90%, rgba(77,175,125,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  #vision .section-inner { position: relative; z-index: 1; }
+
+  #vision .section-kicker { color: var(--green-accent); }
+
+  #vision .section-title { color: white; }
+
+  .vision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 48px;
+  }
+
+  .vision-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 36px;
+    transition: all 0.3s;
+  }
+
+  .vision-card:hover {
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(0,201,110,0.4);
+    transform: translateY(-4px);
+  }
+
+  .vision-card-icon {
+    font-size: 2rem;
+    margin-bottom: 18px;
+  }
+
+  .vision-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--green-accent);
+    margin-bottom: 10px;
+  }
+
+  .vision-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 14px;
+  }
+
+  .vision-card-text {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.75;
+  }
+
+  .vision-quote {
+    margin-top: 56px;
+    text-align: center;
+    padding: 48px;
+    background: rgba(0,201,110,0.08);
+    border: 1px solid rgba(0,201,110,0.2);
+    border-radius: 24px;
+  }
+
+  .vision-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+
+  .vision-quote cite {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--green-accent);
+    margin-top: 16px;
+    font-style: normal;
+    letter-spacing: 1px;
+  }
+
+  /* ══════════════════════════════
+     SWOT PAGE
+  ══════════════════════════════ */
+  #swot {
+    background: var(--off-white);
+  }
+
+  .swot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .swot-card {
+    border-radius: 20px;
+    padding: 36px;
+    border: 1px solid transparent;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .swot-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+  }
+
+  .swot-card.strengths {
+    background: #e8f5ed;
+    border-color: #b5dfc6;
+  }
+  .swot-card.weaknesses {
+    background: #fff8e8;
+    border-color: #f5dfa0;
+  }
+  .swot-card.opportunities {
+    background: #e8f0ff;
+    border-color: #b5c8f5;
+  }
+  .swot-card.threats {
+    background: #ffeae8;
+    border-color: #f5b8b5;
+  }
+
+  .swot-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .swot-letter {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .strengths .swot-letter  { background: var(--green-dark); color: white; }
+  .weaknesses .swot-letter { background: #d4a017; color: white; }
+  .opportunities .swot-letter { background: #2d5fbf; color: white; }
+  .threats .swot-letter   { background: #c0392b; color: white; }
+
+  .swot-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .swot-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .swot-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  .swot-list li::before {
+    content: '→';
+    flex-shrink: 0;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+
+  .strengths .swot-list li::before   { color: var(--green-mid); }
+  .weaknesses .swot-list li::before  { color: #d4a017; }
+  .opportunities .swot-list li::before { color: #2d5fbf; }
+  .threats .swot-list li::before     { color: #c0392b; }
+
+  .swot-note {
+    margin-top: 32px;
+    padding: 20px 28px;
+    background: white;
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* ══════════════════════════════
+     SKILLS PAGE
+  ══════════════════════════════ */
+  #skills {
+    background: var(--green-dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #skills::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 50% at 15% 20%, rgba(0,201,110,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 85% 80%, rgba(77,175,125,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  #skills .section-inner { position: relative; z-index: 1; }
+  #skills .section-kicker { color: var(--green-accent); }
+  #skills .section-title { color: white; }
+
+  .skills-rating-scale {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    margin-bottom: 40px;
+  }
+
+  .skills-rating-scale-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green-accent);
+    margin-right: 8px;
+  }
+
+  .scale-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .scale-stars {
+    color: #fbbf24;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+
+  .skills-category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  .skills-category-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 32px;
+    transition: all 0.3s;
+  }
+
+  .skills-category-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(0,201,110,0.35);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+  }
+
+  .skills-category-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .skills-category-icon {
+    width: 44px; height: 44px;
+    background: rgba(0,201,110,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .skills-category-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--green-accent);
+  }
+
+  .skill-rating-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: all 0.2s;
+  }
+
+  .skill-rating-item:last-child {
+    border-bottom: none;
+  }
+
+  .skill-rating-item:hover {
+    padding-left: 8px;
+  }
+
+  .skill-rating-name {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+  }
+
+  .skill-rating-stars {
+    display: flex;
+    gap: 3px;
+  }
+
+  .skill-rating-stars .star {
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+  }
+
+  .skill-rating-stars .star.filled {
+    color: #fbbf24;
+    text-shadow: 0 0 8px rgba(251,191,36,0.4);
+  }
+
+  .skill-rating-stars .star.half {
+    position: relative;
+    color: rgba(255,255,255,0.15);
+  }
+
+  .skill-rating-stars .star.half::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    width: 50%;
+    color: #fbbf24;
+    text-shadow: 0 0 8px rgba(251,191,36,0.4);
+  }
+
+  .skill-rating-stars .star.empty {
+    color: rgba(255,255,255,0.15);
+  }
+
+  .skill-rating-stars .star.question {
+    color: rgba(255,255,255,0.25);
+    font-size: 0.85rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 2px;
+  }
+
+  .skill-rating-item:hover .star.filled,
+  .skill-rating-item:hover .star.half {
+    transform: scale(1.2);
+  }
+
+  .skill-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .skill-progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .skill-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--green-accent), #fbbf24);
+    transition: width 1s ease;
+    width: 0;
+  }
+
+  @media (max-width: 768px) {
+    .skills-category-grid { grid-template-columns: 1fr; }
+    .skills-rating-scale { gap: 12px; }
+  }
+
+  /* ══════════════════════════════
+     FOOTER
+  ══════════════════════════════ */
+  footer {
+    background: var(--green-dark);
+    padding: 40px 48px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.85rem;
+  }
+
+  footer strong { color: var(--green-accent); }
+
+  /* ══════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════ */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links a { padding: 6px 10px; font-size: 0.78rem; }
+    .section-inner { padding: 60px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .vision-grid { grid-template-columns: 1fr; }
+    .swot-grid { grid-template-columns: 1fr; }
+    .home-name { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+<div id="transition-curtain"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">Sahil<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="javascript:void(0)" onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+    <li><a href="javascript:void(0)" onclick="showPage('about')" id="nav-about">About Me</a></li>
+    <li><a href="javascript:void(0)" onclick="showPage('academics')" id="nav-academics">Academics</a></li>
+    <li><a href="javascript:void(0)" onclick="showPage('achievements')" id="nav-achievements">Achievements</a></li>
+    <li><a href="javascript:void(0)" onclick="showPage('vision')" id="nav-vision">Vision</a></li>
+    <li><a href="javascript:void(0)" onclick="showPage('skills')" id="nav-skills">Skills</a></li>
+    <li><a href="javascript:void(0)" onclick="showPage('swot')" id="nav-swot">SWOT</a></li>
+  </ul>
+</nav>
+
+<!-- ── MARQUEE STRIP ── -->
+<div class="marquee-strip visible" id="marqueeStrip">
+  <div class="marquee-track">
+    <span class="marquee-text">Food Technology · Data Science · AI/ML · MindPeak Institute · Chemistry · EdTech · Supply Chain · Innovation ·&nbsp;</span>
+    <span class="marquee-text">Food Technology · Data Science · AI/ML · MindPeak Institute · Chemistry · EdTech · Supply Chain · Innovation ·&nbsp;</span>
+    <span class="marquee-text">Food Technology · Data Science · AI/ML · MindPeak Institute · Chemistry · EdTech · Supply Chain · Innovation ·&nbsp;</span>
+    <span class="marquee-text">Food Technology · Data Science · AI/ML · MindPeak Institute · Chemistry · EdTech · Supply Chain · Innovation ·&nbsp;</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     HOME
+═══════════════════════ -->
+<section class="page active" id="home">
+  <div class="home-grid-pattern"></div>
+  <div class="ambient-blob" id="ambientBlob"></div>
+  <span class="leaf leaf-1">🌿</span>
+  <span class="leaf leaf-2">🌱</span>
+  <span class="leaf leaf-3">🍃</span>
+
+  <div class="home-content">
+    <div class="home-tag">Co-Founder · Educator · Food-Tech Innovator</div>
+    <h1 class="home-name">
+      Sahil
+      <span>Singh<span style="color:var(--green-accent)">.</span></span>
+    </h1>
+    <p class="home-desc">
+      I don't just study the future — I'm building it. Food Technology meets Data Science meets EdTech. This is where it all comes together.
+    </p>
+    <a class="home-cta" href="javascript:void(0)" onclick="showPage('about')">
+      See My Journey →
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="home-scroll-hint">explore</div>
+</section>
+
+<!-- ═══════════════════════
+     ABOUT
+═══════════════════════ -->
+<section class="page" id="about">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-kicker">01 — Who I Am</div>
+      <h2 class="section-title">About <em>Me</em></h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-bio">
+        <p>
+          Hi! I'm <strong>Sahil Singh</strong>, a B.Tech Food Technology student at <strong>Lovely Professional University</strong> and Co-Founder of <strong>MindPeak Institute</strong> — an online coaching platform helping students crack NEET, JEE Mains, CUET and other Class 12 competitive exams.
+        </p>
+        <p>
+          At MindPeak, I wear three hats — <strong>Co-Founder, HR, and Chemistry Faculty</strong>. I handle recruitment and operations while actively teaching Chemistry to students preparing for India's toughest competitive exams. It's early days for our startup, but the vision is big.
+        </p>
+        <p>
+          Before MindPeak, I worked as a <strong>Chemistry Teacher at NNIIT</strong> (Sep 2024 – Jan 2025), where I built my teaching foundation and discovered my passion for making complex concepts accessible to students.
+        </p>
+        <p>
+          Beyond work and academics, I'm increasingly drawn to <strong>Data Science, AI, and Machine Learning</strong>. I completed my schooling from <strong>DAV Senior Secondary Public School, Dehra Gopipur</strong>, which gave me a strong academic foundation.
+        </p>
+        <p>
+          Off the clock, you'll find me on the <strong>badminton court</strong> or watching <strong>cricket</strong>. I believe in staying sharp — mentally and physically.
+        </p>
+      </div>
+
+      <div class="about-sidebar">
+        <div class="info-card">
+          <div class="info-card-label">Current Education</div>
+          <div class="info-card-value">B.Tech Food Technology<br>Lovely Professional University</div>
+        </div>
+        <div class="info-card" style="border-left: 3px solid var(--green-accent);">
+          <div class="info-card-label">🚀 Co-Founder & HR & Faculty</div>
+          <div class="info-card-value">MindPeak Institute<br><span style="font-size:0.85rem; font-weight:400; color:var(--text-light)">NEET · JEE · CUET Chemistry</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Previous Experience</div>
+          <div class="info-card-value">Chemistry Teacher · NNIIT<br><span style="font-size:0.85rem; font-weight:400; color:var(--text-light)">Sep 2024 – Jan 2025</span></div>
+        </div>
+        <a href="marksheet.pdf" target="_blank" style="text-decoration:none">
+        <div class="info-card" style="cursor:pointer; transition: all 0.25s;" onmouseover="this.style.borderColor='var(--green-accent)'; this.style.boxShadow='0 4px 16px rgba(0,201,110,0.15)'" onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+          <div class="info-card-label">School · 📄 Click to view Marksheet</div>
+          <div class="info-card-value">DAV Sr. Sec. Public School<br>Dehra Gopipur</div>
+        </div>
+        </a>
+        <div class="info-card">
+          <div class="info-card-label">Key Skills</div>
+          <div class="skills-chips">
+            <span class="chip">Food Analysis</span>
+            <span class="chip">Time Management</span>
+            <span class="chip outline">Data Science (Learning)</span>
+            <span class="chip outline">AI / ML (Interest)</span>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Interests & Hobbies</div>
+          <div class="skills-chips">
+            <span class="chip">🏸 Badminton</span>
+            <span class="chip">🏏 Cricket</span>
+            <span class="chip outline">Competitive Exams</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     ACADEMICS & SKILLS
+═══════════════════════ -->
+<section class="page" id="academics">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-kicker">02 — Education & Skills</div>
+      <h2 class="section-title">Academics &amp; <em>Skills</em></h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">Present</div>
+        <div class="timeline-title">B.Tech — Food Technology</div>
+        <div class="timeline-sub">Lovely Professional University, Punjab</div>
+      </div>
+      <div class="timeline-item" style="border-left: 3px solid var(--green-accent);">
+        <div class="timeline-year">Jan 2025 – Present</div>
+        <div class="timeline-title">Co-Founder · HR · Chemistry Faculty</div>
+        <div class="timeline-sub">MindPeak Institute &nbsp;·&nbsp; Online Coaching for NEET, JEE Mains, CUET</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Sep 2024 – Jan 2025</div>
+        <div class="timeline-title">Chemistry Teacher</div>
+        <div class="timeline-sub">
+          NNIIT &nbsp;·&nbsp; Competitive Exam Coaching
+          &nbsp;<a href="docs/nniit_offer_letter.pdf" target="_blank" style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; color:var(--green-accent); font-weight:600; text-decoration:none; background:var(--green-pale); padding:3px 10px; border-radius:100px; margin-left:4px;">📄 Offer Letter</a>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Class XII</div>
+        <div class="timeline-title">Senior Secondary Education</div>
+        <div class="timeline-sub">
+          DAV Senior Secondary Public School, Dehra Gopipur
+          &nbsp;<a href="docs/marksheet_12th.pdf" target="_blank" style="display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; color:var(--green-accent); font-weight:600; text-decoration:none; background:var(--green-pale); padding:3px 10px; border-radius:100px; margin-left:4px;">📄 Marksheet</a>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Foundation</div>
+        <div class="timeline-title">Early Schooling</div>
+        <div class="timeline-sub">DAV Senior Secondary Public School, Dehra Gopipur</div>
+      </div>
+    </div>
+
+    <div class="skills-section-title">Technical &amp; Soft Skills</div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon">🔬</div>
+        <div class="skill-name">Food Analysis</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">⚗️</div>
+        <div class="skill-name">Chemistry Teaching</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🎯</div>
+        <div class="skill-name">Curriculum Design</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">👥</div>
+        <div class="skill-name">HR & Recruitment</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">⏱️</div>
+        <div class="skill-name">Time Management</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📊</div>
+        <div class="skill-name">Data Science (Learning)</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🤖</div>
+        <div class="skill-name">AI / ML (Interest)</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🚀</div>
+        <div class="skill-name">Startup Operations</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     ACHIEVEMENTS
+═══════════════════════ -->
+<section class="page" id="achievements">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-kicker">03 — Certificates & Activities</div>
+      <h2 class="section-title">Achievements &amp; <em>Certificates</em></h2>
+    </div>
+
+    <div class="achievements-grid">
+      <div class="achievement-card">
+        <div class="achievement-icon">🐝</div>
+        <div class="achievement-title">Participation — Apiculture Event</div>
+        <div class="achievement-desc">
+          Actively participated in an Apiculture (Beekeeping) event, gaining hands-on exposure to agricultural science and its connections to food production and ecosystems.
+        </div>
+        <span class="achievement-badge">Participation Certificate</span>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div class="section-kicker" style="margin-bottom:16px">Hobbies &amp; Extracurricular</div>
+      <div class="hobbies-row">
+        <div class="hobby-pill">🏸 Badminton</div>
+        <div class="hobby-pill">🏏 Cricket</div>
+        <div class="hobby-pill">📊 Data Science Exploration</div>
+        <div class="hobby-pill">📖 Competitive Exam Prep</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     VISION
+═══════════════════════ -->
+<section class="page" id="vision">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-kicker">04 — Goals & Ambitions</div>
+      <h2 class="section-title" style="color:white">My <em style="color:rgba(255,255,255,0.6)">Vision</em></h2>
+    </div>
+
+    <div class="vision-grid">
+      <div class="vision-card">
+        <div class="vision-card-icon">🎯</div>
+        <div class="vision-card-label">Short-Term Goal</div>
+        <div class="vision-card-title">Master Data Science & AI/ML</div>
+        <div class="vision-card-text">
+          I'm not waiting to graduate to start building. Right now, alongside my Food Technology degree, I'm developing a real foundation in Data Science and AI/ML — the tools that will define the next era of food innovation.
+        </div>
+      </div>
+
+      <div class="vision-card">
+        <div class="vision-card-icon">📈</div>
+        <div class="vision-card-label">Competitive Aspiration</div>
+        <div class="vision-card-title">CAT Preparation</div>
+        <div class="vision-card-text">
+          I'm preparing for CAT with intent — not just to get an MBA, but to combine technical food science expertise with sharp business thinking. The goal is leadership, not just a degree.
+        </div>
+      </div>
+
+      <div class="vision-card">
+        <div class="vision-card-icon">🚀</div>
+        <div class="vision-card-label">Long-Term Vision</div>
+        <div class="vision-card-title">Bridging Food Tech & Data Science</div>
+        <div class="vision-card-text">
+          My long-term play is clear: operate at the intersection of food technology and data science — building AI-powered systems that solve real problems in food safety, quality control, and supply chain efficiency at scale, in India and beyond.
+        </div>
+      </div>
+
+      <div class="vision-card">
+        <div class="vision-card-icon">🌱</div>
+        <div class="vision-card-label">Core Value</div>
+        <div class="vision-card-title">Continuous Growth</div>
+        <div class="vision-card-text">
+          I don't believe in waiting for the right moment. Every exam, every lecture I deliver, every dataset I explore — it all compounds. Growth isn't a destination for me. It's the default mode.
+        </div>
+      </div>
+
+      <div class="vision-card">
+        <div class="vision-card-icon">🏫</div>
+        <div class="vision-card-label">Startup Vision</div>
+        <div class="vision-card-title">Growing MindPeak Into Something Bigger</div>
+        <div class="vision-card-text">
+          MindPeak started as a coaching platform — but the vision is larger. I want to scale it into a full-stack EdTech brand that doesn't just help students crack exams, but genuinely transforms how they think about science and learning. Better content, smarter systems, a stronger team, and eventually — technology-driven personalised learning. We're early. But we're building with purpose.
+        </div>
+      </div>
+    </div>
+
+    <div class="vision-quote">
+      <p>"The future belongs to those who prepare for it today — and I'm preparing at the intersection of food science and the digital world."</p>
+      <cite>— Sahil Singh</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SWOT
+═══════════════════════ -->
+<section class="page" id="swot">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-kicker">06 — Self Assessment</div>
+      <h2 class="section-title">SWOT <em>Analysis</em></h2>
+    </div>
+
+    <div class="swot-grid">
+      <div class="swot-card strengths">
+        <div class="swot-header">
+          <div class="swot-letter">S</div>
+          <div class="swot-card-title">Strengths</div>
+        </div>
+        <ul class="swot-list">
+          <li>Proven laboratory foundation in Food Analysis and quality sciences</li>
+          <li>Teaching Chemistry professionally before age 21 — and doing it well</li>
+          <li>Co-running a real EdTech startup while completing a full-time degree</li>
+          <li>Multidisciplinary thinker: food science + data science + management</li>
+          <li>Physically disciplined, mentally resilient — competitive sports background</li>
+          <li>Rare clarity of purpose: clear short, medium, and long-term goals</li>
+        </ul>
+      </div>
+
+      <div class="swot-card weaknesses">
+        <div class="swot-header">
+          <div class="swot-letter">W</div>
+          <div class="swot-card-title">Growth Areas</div>
+        </div>
+        <ul class="swot-list">
+          <li>Formal industry internship experience is limited — actively closing this gap</li>
+          <li>Data Science & AI/ML skills are early-stage — structured self-study underway</li>
+          <li>Balancing CAT prep, degree, and startup simultaneously — managed through strict prioritisation</li>
+          <li>Extracurricular achievements need better documentation — in progress</li>
+        </ul>
+      </div>
+
+      <div class="swot-card opportunities">
+        <div class="swot-header">
+          <div class="swot-letter">O</div>
+          <div class="swot-card-title">Opportunities</div>
+        </div>
+        <ul class="swot-list">
+          <li>India's food technology sector is undergoing rapid digital transformation</li>
+          <li>Explosive demand for AI-driven food safety and supply chain solutions</li>
+          <li>MindPeak is positioned in a booming EdTech market with real room to scale</li>
+          <li>LPU's industry network opens internship and research pathways</li>
+          <li>CAT success could unlock premier MBA programs and business networks</li>
+        </ul>
+      </div>
+
+      <div class="swot-card threats">
+        <div class="swot-header">
+          <div class="swot-letter">T</div>
+          <div class="swot-card-title">Challenges I'm Ready For</div>
+        </div>
+        <ul class="swot-list">
+          <li>High competition in food industry and data science — keeps me sharper</li>
+          <li>Tech evolves fast — constant upskilling is already built into my routine</li>
+          <li>Peers with earlier internship exposure have a head start — I'm closing the gap with initiative</li>
+          <li>Managing multiple high-stakes tracks simultaneously — the challenge that builds the most resilience</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="swot-note">
+      <span style="font-size:1.3rem">✏️</span>
+      <span>This analysis will evolve — as I grow, so will this page.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SKILLS
+═══════════════════════ -->
+<section class="page" id="skills">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-kicker">05 — Self Rating</div>
+      <h2 class="section-title" style="color:white">My <em style="color:rgba(255,255,255,0.6)">Skills</em></h2>
+    </div>
+
+    <div class="skills-rating-scale">
+      <span class="skills-rating-scale-label">Rating Scale:</span>
+      <div class="scale-item"><span class="scale-stars">★</span> Basic</div>
+      <div class="scale-item"><span class="scale-stars">★★</span> Intermediate</div>
+      <div class="scale-item"><span class="scale-stars">★★★</span> Good</div>
+      <div class="scale-item"><span class="scale-stars">★★★★</span> Strong</div>
+      <div class="scale-item"><span class="scale-stars">★★★★★</span> Expert</div>
+    </div>
+
+    <div class="skills-category-grid">
+
+      <!-- Language Skills -->
+      <div class="skills-category-card">
+        <div class="skills-category-header">
+          <div class="skills-category-icon">🗣️</div>
+          <div class="skills-category-title">Language Skills</div>
+        </div>
+        <div class="skill-rating-item" data-rating="4">
+          <span class="skill-rating-name">English <span style="font-size:0.75rem; color:rgba(255,255,255,0.4); font-weight:400;">(Level B2)</span></span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="5">
+          <span class="skill-rating-name">Hindi</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="2">
+          <span class="skill-rating-name">Punjabi</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+      </div>
+
+      <!-- Technical Skills -->
+      <div class="skills-category-card">
+        <div class="skills-category-header">
+          <div class="skills-category-icon">💻</div>
+          <div class="skills-category-title">Technical Skills</div>
+        </div>
+        <div class="skill-rating-item" data-rating="3">
+          <span class="skill-rating-name">Food Analysis</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="1">
+          <span class="skill-rating-name">Data Science</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="2">
+          <span class="skill-rating-name">Computer Basics</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="3">
+          <span class="skill-rating-name">AI Based Skills</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+      </div>
+
+      <!-- Teaching Skills -->
+      <div class="skills-category-card">
+        <div class="skills-category-header">
+          <div class="skills-category-icon">📚</div>
+          <div class="skills-category-title">Teaching Skills</div>
+        </div>
+        <div class="skill-rating-item" data-rating="4">
+          <span class="skill-rating-name">Chemistry Teaching</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="4">
+          <span class="skill-rating-name">Curriculum Design</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="4">
+          <span class="skill-rating-name">Student Engagement</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+      </div>
+
+      <!-- Personal Skills -->
+      <div class="skills-category-card">
+        <div class="skills-category-header">
+          <div class="skills-category-icon">🧠</div>
+          <div class="skills-category-title">Personal Skills</div>
+        </div>
+        <div class="skill-rating-item" data-rating="3">
+          <span class="skill-rating-name">Time Management</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="4">
+          <span class="skill-rating-name">Hardworking</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+        <div class="skill-rating-item" data-rating="3.5">
+          <span class="skill-rating-name">Discipline</span>
+          <div class="skill-rating-stars"></div>
+        </div>
+      </div>
+
+      <!-- Co-Curricular Skills -->
+      <div class="skills-category-card" style="grid-column: 1 / -1;">
+        <div class="skills-category-header">
+          <div class="skills-category-icon">🏅</div>
+          <div class="skills-category-title">Co-Curricular Skills</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap: 0 40px;">
+          <div class="skill-rating-item" data-rating="2">
+            <span class="skill-rating-name">🏸 Badminton</span>
+            <div class="skill-rating-stars"></div>
+          </div>
+          <div class="skill-rating-item" data-rating="1">
+            <span class="skill-rating-name">🏏 Cricket</span>
+            <div class="skill-rating-stars"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Designed & built with 💚 &nbsp;|&nbsp; <strong>Sahil Singh</strong> &nbsp;|&nbsp; Food Technology Portfolio &nbsp;|&nbsp; Lovely Professional University</p>
+</footer>
+
+<script>
+  function showPage(id) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Remove active from all nav links
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    // Show target
+    document.getElementById(id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  // Keyboard nav (optional nice touch)
+  const pages = ['home','about','academics','achievements','vision','skills','swot'];
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') {
+      const cur = pages.findIndex(p => document.getElementById(p).classList.contains('active'));
+      if (cur < pages.length - 1) showPage(pages[cur + 1]);
+    }
+    if (e.key === 'ArrowLeft') {
+      const cur = pages.findIndex(p => document.getElementById(p).classList.contains('active'));
+      if (cur > 0) showPage(pages[cur - 1]);
+    }
+  });
+
+  // Generate star ratings dynamically (supports half stars and ? ratings)
+  function renderStars() {
+    document.querySelectorAll('.skill-rating-item').forEach(item => {
+      const ratingStr = item.getAttribute('data-rating');
+      const container = item.querySelector('.skill-rating-stars');
+      if (!container || container.children.length > 0) return;
+
+      // Handle "?" rating
+      if (ratingStr === '?') {
+        container.innerHTML = '<span class="star question">? ? ? ? ?</span>';
+        return;
+      }
+
+      const rating = parseFloat(ratingStr);
+      const fullStars = Math.floor(rating);
+      const hasHalf = (rating % 1) >= 0.5;
+      let html = '';
+
+      for (let i = 1; i <= 5; i++) {
+        if (i <= fullStars) {
+          html += '<span class="star filled">★</span>';
+        } else if (i === fullStars + 1 && hasHalf) {
+          html += '<span class="star half">☆</span>';
+        } else {
+          html += '<span class="star empty">☆</span>';
+        }
+      }
+      container.innerHTML = html;
+    });
+  }
+  renderStars();
+
+  // Animate progress bars on page show
+  const origShowPage = showPage;
+  // Stars have a subtle stagger animation
+  function animateSkillStars() {
+    document.querySelectorAll('.skill-rating-item').forEach((item, idx) => {
+      item.style.opacity = '0';
+      item.style.transform = 'translateX(-10px)';
+      item.style.transition = 'all 0.4s ease';
+      setTimeout(() => {
+        item.style.opacity = '1';
+        item.style.transform = 'translateX(0)';
+      }, 80 * idx);
+    });
+  }
+
+  // Override showPage to trigger animations + curtain transition
+  let isTransitioning = false;
+  const _origShow = showPage;
+  showPage = function(id) {
+    // Prevent double-clicks during transition
+    if (isTransitioning) return;
+
+    // Skip transition on initial load (home is already active)
+    const currentPage = document.querySelector('.page.active');
+    if (currentPage && currentPage.id === id) return;
+
+    isTransitioning = true;
+    const curtain = document.getElementById('transition-curtain');
+
+    // Phase 1: Curtain slides UP (scaleY 0 → 1, origin bottom)
+    curtain.style.transformOrigin = 'bottom';
+    curtain.style.transition = 'transform 0.35s cubic-bezier(0.7, 0, 0.3, 1)';
+    curtain.style.transform = 'scaleY(1)';
+
+    // Phase 2: At midpoint, switch the page
+    setTimeout(() => {
+      _origShow(id);
+
+      // Trigger page-specific animations
+      if (id === 'skills') {
+        setTimeout(animateSkillStars, 100);
+      }
+      if (id === 'home') {
+        setTimeout(animateHeroName, 100);
+      }
+
+      // Show/hide marquee strip
+      const marquee = document.getElementById('marqueeStrip');
+      if (marquee) {
+        if (id === 'home') {
+          marquee.classList.add('visible');
+        } else {
+          marquee.classList.remove('visible');
+        }
+      }
+
+      // Phase 3: Curtain slides AWAY (scaleY 1 → 0, origin top)
+      curtain.style.transformOrigin = 'top';
+      curtain.style.transition = 'transform 0.35s cubic-bezier(0.7, 0, 0.3, 1)';
+      curtain.style.transform = 'scaleY(0)';
+
+      setTimeout(() => {
+        isTransitioning = false;
+      }, 350);
+    }, 350);
+  };
+
+  // ── HERO NAME LETTER ANIMATION ──
+  function animateHeroName() {
+    const nameEl = document.querySelector('.home-name');
+    if (!nameEl || nameEl.dataset.split === 'true') {
+      // Already split — just re-trigger
+      if (nameEl && nameEl.dataset.split === 'true') {
+        // Reset all letters
+        nameEl.querySelectorAll('.letter').forEach(l => l.classList.remove('revealed'));
+        document.querySelector('.home-tag')?.classList.remove('revealed');
+        document.querySelector('.home-desc')?.classList.remove('revealed');
+        document.querySelector('.home-cta')?.classList.remove('revealed');
+        document.querySelector('.home-scroll-hint')?.classList.remove('revealed');
+        // Re-trigger after a frame
+        requestAnimationFrame(() => triggerHeroReveal(nameEl));
+      }
+      return;
+    }
+
+    // Split letters
+    nameEl.dataset.split = 'true';
+    const lines = nameEl.childNodes;
+    let newHTML = '';
+
+    lines.forEach(node => {
+      if (node.nodeType === 3) {
+        // Text node ("Sahil")
+        const text = node.textContent.trim();
+        if (!text) return;
+        text.split('').forEach(ch => {
+          if (ch === ' ') {
+            newHTML += ' ';
+          } else {
+            newHTML += `<span class="letter-wrap"><span class="letter" style="color:white">${ch}</span></span>`;
+          }
+        });
+      } else if (node.nodeType === 1 && node.tagName === 'SPAN') {
+        // The <span>Singh<span>.</span></span> element
+        newHTML += '<span style="display:block; color:var(--green-accent);">';
+        node.childNodes.forEach(child => {
+          if (child.nodeType === 3) {
+            child.textContent.split('').forEach(ch => {
+              if (ch === ' ') {
+                newHTML += ' ';
+              } else {
+                newHTML += `<span class="letter-wrap"><span class="letter">${ch}</span></span>`;
+              }
+            });
+          } else if (child.nodeType === 1) {
+            // The period span
+            newHTML += `<span class="letter-wrap"><span class="letter" style="color:var(--green-accent)">${child.textContent}</span></span>`;
+          }
+        });
+        newHTML += '</span>';
+      }
+    });
+
+    nameEl.innerHTML = newHTML;
+    requestAnimationFrame(() => triggerHeroReveal(nameEl));
+  }
+
+  function triggerHeroReveal(nameEl) {
+    const letters = nameEl.querySelectorAll('.letter');
+    letters.forEach((letter, i) => {
+      setTimeout(() => {
+        letter.classList.add('revealed');
+      }, i * 50);
+    });
+
+    // After all letters finish, reveal tag, desc, cta
+    const totalLetterTime = letters.length * 50 + 400;
+
+    setTimeout(() => {
+      document.querySelector('.home-tag')?.classList.add('revealed');
+    }, totalLetterTime);
+
+    setTimeout(() => {
+      document.querySelector('.home-desc')?.classList.add('revealed');
+    }, totalLetterTime + 200);
+
+    setTimeout(() => {
+      document.querySelector('.home-cta')?.classList.add('revealed');
+    }, totalLetterTime + 400);
+
+    setTimeout(() => {
+      document.querySelector('.home-scroll-hint')?.classList.add('revealed');
+    }, totalLetterTime + 600);
+  }
+
+  // Run on initial load
+  animateHeroName();
+
+  // ── AMBIENT BLOB (home page only) ──
+  (function() {
+    const blob = document.getElementById('ambientBlob');
+    if (!blob) return;
+    let blobX = window.innerWidth / 2;
+    let blobY = window.innerHeight / 2;
+    let targetX = blobX, targetY = blobY;
+
+    document.addEventListener('mousemove', e => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+    });
+
+    function animateBlob() {
+      const ease = 0.05;
+      blobX += (targetX - blobX) * ease;
+      blobY += (targetY - blobY) * ease;
+      // Only update when home is active
+      const home = document.getElementById('home');
+      if (home && home.classList.contains('active')) {
+        blob.style.left = blobX + 'px';
+        blob.style.top = blobY + 'px';
+      }
+      requestAnimationFrame(animateBlob);
+    }
+    requestAnimationFrame(animateBlob);
+  })();
+
+  // ── CUSTOM CURSOR SYSTEM ──
+  (function() {
+    // Skip on touch devices
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+
+    // Create cursor elements
+    const dot = document.createElement('div');
+    dot.className = 'cursor-dot';
+    const ring = document.createElement('div');
+    ring.className = 'cursor-ring';
+    document.body.appendChild(dot);
+    document.body.appendChild(ring);
+
+    // Mouse position tracking
+    let mouseX = -100, mouseY = -100;
+    let ringX = -100, ringY = -100;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      // Dot follows instantly
+      dot.style.left = mouseX + 'px';
+      dot.style.top = mouseY + 'px';
+    });
+
+    // Ring follows with lerp delay via requestAnimationFrame
+    function animateRing() {
+      const ease = 0.12;
+      ringX += (mouseX - ringX) * ease;
+      ringY += (mouseY - ringY) * ease;
+      ring.style.left = ringX + 'px';
+      ring.style.top = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    requestAnimationFrame(animateRing);
+
+    // Hover effect on interactive elements
+    const hoverTargets = document.querySelectorAll(
+      '.nav-links a, .vision-card, .swot-card, .achievement-card, .home-cta, .skill-card, .skills-category-card, .hobby-pill, .chip, .timeline-item'
+    );
+
+    hoverTargets.forEach(el => {
+      el.style.cursor = 'none';
+      el.addEventListener('mouseenter', () => {
+        dot.classList.add('hovering');
+        ring.classList.add('hovering');
+      });
+      el.addEventListener('mouseleave', () => {
+        dot.classList.remove('hovering');
+        ring.classList.remove('hovering');
+      });
+    });
+
+    // Magnetic pull on .home-cta
+    const cta = document.querySelector('.home-cta');
+    if (cta) {
+      cta.style.transition = 'transform 0.3s ease';
+      cta.addEventListener('mousemove', e => {
+        const rect = cta.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) * 0.15;
+        const dy = (e.clientY - cy) * 0.15;
+        const maxPull = 6;
+        const px = Math.max(-maxPull, Math.min(maxPull, dx));
+        const py = Math.max(-maxPull, Math.min(maxPull, dy));
+        cta.style.transform = `translate(${px}px, ${py}px)`;
+      });
+      cta.addEventListener('mouseleave', () => {
+        cta.style.transform = 'translate(0, 0)';
+      });
+    }
+
+    // Hide cursor when leaving window
+    document.addEventListener('mouseleave', () => {
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    });
+    document.addEventListener('mouseenter', () => {
+      dot.style.opacity = '1';
+      ring.style.opacity = '0.6';
+    });
+  })();
+</script>
+</body>
+</html>
