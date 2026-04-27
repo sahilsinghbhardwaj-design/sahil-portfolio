@@ -1222,7 +1222,11 @@
     opacity: 0.3;
   }
 
-  /* ── SCROLL REVEAL animations ── */
+  /* ══════════════════════════════
+     SCROLL ANIMATIONS
+  ══════════════════════════════ */
+
+  /* Generic fade-up reveal */
   .reveal {
     opacity: 0;
     transform: translateY(32px);
@@ -1231,6 +1235,38 @@
   .reveal.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* 3D rotate-in for achievement cards */
+  .reveal-3d {
+    opacity: 0;
+    transform: perspective(800px) rotateX(18deg) rotateY(-8deg) translateY(40px) scale(0.95);
+    transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1),
+                transform 0.65s cubic-bezier(0.16,1,0.3,1);
+    transform-origin: center bottom;
+    will-change: transform, opacity;
+  }
+  .reveal-3d.visible {
+    opacity: 1;
+    transform: perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1);
+  }
+
+  /* Star fade-in with stagger (applied via JS delay) */
+  .star {
+    display: inline-block;
+    opacity: 0;
+    transform: scale(0.5) translateY(6px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .star.pop {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  /* question stars don't animate individually */
+  .star.question {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 
   /* ══════════════════════════════
@@ -1931,22 +1967,42 @@
   if (marquee) marquee.classList.add('visible');
 
   // ══════════════════════════════
-  // SCROLL REVEAL — bidirectional (re-hides when scrolling back up)
+  // SCROLL REVEAL — bidirectional
   // ══════════════════════════════
+
+  // Generic fade-up elements
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
       } else {
-        // Re-hide so it re-animates when scrolling back down
         entry.target.classList.remove('visible');
       }
     });
   }, { threshold: 0.12 });
 
-  document.querySelectorAll('.section-header, .timeline-item, .skill-card, .achievement-card, .vision-card, .swot-card, .skills-category-card, .contact-card').forEach(el => {
+  document.querySelectorAll('.section-header, .timeline-item, .vision-card, .swot-card, .contact-card').forEach(el => {
     el.classList.add('reveal');
     revealObserver.observe(el);
+  });
+
+  // 3D rotate-in for achievement cards + skill/category cards
+  const reveal3dObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Stagger siblings within same parent
+        const siblings = Array.from(entry.target.parentElement.querySelectorAll('.reveal-3d'));
+        const idx = siblings.indexOf(entry.target);
+        setTimeout(() => entry.target.classList.add('visible'), idx * 80);
+      } else {
+        entry.target.classList.remove('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.achievement-card, .skill-card, .skills-category-card').forEach(el => {
+    el.classList.add('reveal-3d');
+    reveal3dObserver.observe(el);
   });
 
   // ══════════════════════════════
@@ -2092,7 +2148,7 @@
   })();
 
   // ══════════════════════════════
-  // STAR RATINGS
+  // STAR RATINGS — with staggered fade-in on scroll
   // ══════════════════════════════
   function renderStars() {
     document.querySelectorAll('.skill-rating-item').forEach(item => {
@@ -2113,6 +2169,31 @@
     });
   }
   renderStars();
+
+  // Animate stars when skills section scrolls into view
+  function popStarsIn(container) {
+    const stars = container.querySelectorAll('.star:not(.question)');
+    stars.forEach((star, i) => {
+      star.classList.remove('pop');
+      setTimeout(() => star.classList.add('pop'), i * 80);
+    });
+  }
+
+  const skillsSection = document.getElementById('skills');
+  if (skillsSection) {
+    const starsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Small delay so section reveal animation plays first
+          setTimeout(() => popStarsIn(skillsSection), 300);
+        } else {
+          // Reset stars so they re-animate on next scroll in
+          skillsSection.querySelectorAll('.star:not(.question)').forEach(s => s.classList.remove('pop'));
+        }
+      });
+    }, { threshold: 0.15 });
+    starsObserver.observe(skillsSection);
+  }
 
   // ══════════════════════════════
   // CUSTOM CURSOR
