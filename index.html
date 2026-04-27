@@ -193,20 +193,15 @@
     100% { transform: translateX(-50%); }
   }
 
-  /* ── PAGES ── */
+  /* ── PAGES (single-page layout) ── */
   .page {
     min-height: 100vh;
-    padding-top: 64px;
-    display: none;
-    animation: fadeUp 0.5s ease forwards;
+    padding-top: 100px; /* nav 64px + marquee 36px */
+    display: block;
   }
 
-  .page.active { display: block; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  /* Keep home flush — it handles its own centering */
+  #home { padding-top: 0; }
 
   /* ══════════════════════════════
      HOME PAGE
@@ -216,9 +211,6 @@
     min-height: 100vh;
     position: relative;
     overflow: hidden;
-  }
-
-  #home.active {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -404,13 +396,21 @@
     50%       { transform: translateX(-50%) translateY(6px); }
   }
 
-  /* Floating leaf deco */
+  /* ── PARALLAX LAYERS ── */
+  .parallax-bg {
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+    pointer-events: none;
+  }
+
   .leaf {
     position: absolute;
     opacity: 0.06;
     font-size: 120px;
     pointer-events: none;
     user-select: none;
+    will-change: transform;
   }
   .leaf-1 { top: 10%; left: 5%; transform: rotate(-30deg); font-size: 180px; }
   .leaf-2 { bottom: 15%; right: 4%; transform: rotate(20deg); font-size: 140px; }
@@ -1215,6 +1215,24 @@
     .contact-cards { grid-template-columns: 1fr; }
   }
 
+  /* ── SECTION DIVIDERS ── */
+  .section-divider {
+    height: 4px;
+    background: linear-gradient(90deg, var(--green-accent), var(--green-mid), transparent);
+    opacity: 0.3;
+  }
+
+  /* ── SCROLL REVEAL animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* ══════════════════════════════
      FOOTER
   ══════════════════════════════ */
@@ -1243,20 +1261,20 @@
 </style>
 </head>
 <body>
-<div id="transition-curtain"></div>
+<div id="transition-curtain" style="display:none"></div>
 
 <!-- ── NAV ── -->
 <nav>
   <div class="nav-logo">Sahil<span>.</span></div>
   <ul class="nav-links">
-    <li><a href="javascript:void(0)" onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
-    <li><a href="javascript:void(0)" onclick="showPage('about')" id="nav-about">About Me</a></li>
-    <li><a href="javascript:void(0)" onclick="showPage('academics')" id="nav-academics">Academics</a></li>
-    <li><a href="javascript:void(0)" onclick="showPage('achievements')" id="nav-achievements">Achievements</a></li>
-    <li><a href="javascript:void(0)" onclick="showPage('vision')" id="nav-vision">Vision</a></li>
-    <li><a href="javascript:void(0)" onclick="showPage('skills')" id="nav-skills">Skills</a></li>
-    <li><a href="javascript:void(0)" onclick="showPage('swot')" id="nav-swot">SWOT</a></li>
-    <li><a href="javascript:void(0)" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+    <li><a href="#home" id="nav-home" class="active">Home</a></li>
+    <li><a href="#about" id="nav-about">About Me</a></li>
+    <li><a href="#academics" id="nav-academics">Academics</a></li>
+    <li><a href="#achievements" id="nav-achievements">Achievements</a></li>
+    <li><a href="#vision" id="nav-vision">Vision</a></li>
+    <li><a href="#skills" id="nav-skills">Skills</a></li>
+    <li><a href="#swot" id="nav-swot">SWOT</a></li>
+    <li><a href="#contact" id="nav-contact">Contact</a></li>
   </ul>
 </nav>
 
@@ -1273,7 +1291,7 @@
 <!-- ═══════════════════════
      HOME
 ═══════════════════════ -->
-<section class="page active" id="home">
+<section class="page" id="home">
   <div class="home-grid-pattern"></div>
   <div class="ambient-blob" id="ambientBlob"></div>
   <span class="leaf leaf-1">🌿</span>
@@ -1289,7 +1307,7 @@
     <p class="home-desc">
       I don't just study the future — I'm building it. Food Technology meets Data Science meets EdTech. This is where it all comes together.
     </p>
-    <a class="home-cta" href="javascript:void(0)" onclick="showPage('about')">
+    <a class="home-cta" href="#about">
       See My Journey →
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
@@ -1301,6 +1319,7 @@
 <!-- ═══════════════════════
      ABOUT
 ═══════════════════════ -->
+<div class="section-divider"></div>
 <section class="page" id="about">
   <div class="section-inner">
     <div class="section-header">
@@ -1371,6 +1390,7 @@
 <!-- ═══════════════════════
      ACADEMICS & SKILLS
 ═══════════════════════ -->
+<div class="section-divider"></div>
 <section class="page" id="academics">
   <div class="section-inner">
     <div class="section-header">
@@ -1453,6 +1473,7 @@
 <!-- ═══════════════════════
      ACHIEVEMENTS
 ═══════════════════════ -->
+<div class="section-divider"></div>
 <section class="page" id="achievements">
   <div class="section-inner">
     <div class="section-header">
@@ -1486,6 +1507,7 @@
 <!-- ═══════════════════════
      VISION
 ═══════════════════════ -->
+<div class="section-divider"></div>
 <section class="page" id="vision">
   <div class="section-inner">
     <div class="section-header">
@@ -1806,6 +1828,7 @@
 <!-- ═══════════════════════
      CONTACT
 ═══════════════════════ -->
+<div class="section-divider"></div>
 <section class="page" id="contact">
   <div class="section-inner">
     <div class="section-header">
@@ -1846,179 +1869,183 @@
 </footer>
 
 <script>
-  function showPage(id) {
-    // Hide all pages
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    // Remove active from all nav links
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-    // Show target
-    document.getElementById(id).classList.add('active');
-    document.getElementById('nav-' + id).classList.add('active');
-    window.scrollTo(0, 0);
-    return false;
+  // ══════════════════════════════
+  // SINGLE-PAGE: Active nav via IntersectionObserver
+  // ══════════════════════════════
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sections = document.querySelectorAll('section.page');
+  const NAV_HEIGHT = 100;
+
+  // ── SMOOTH EASED SCROLL (fixes "too fast" feeling) ──
+  function easedScrollTo(targetY, duration) {
+    const startY = window.scrollY;
+    const diff = targetY - startY;
+    let startTime = null;
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    }
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      window.scrollTo(0, startY + diff * easeInOutCubic(progress));
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
   }
 
-  // Keyboard nav (optional nice touch)
-  const pages = ['home','about','academics','achievements','vision','skills','swot','contact'];
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight') {
-      const cur = pages.findIndex(p => document.getElementById(p).classList.contains('active'));
-      if (cur < pages.length - 1) showPage(pages[cur + 1]);
-    }
-    if (e.key === 'ArrowLeft') {
-      const cur = pages.findIndex(p => document.getElementById(p).classList.contains('active'));
-      if (cur > 0) showPage(pages[cur - 1]);
-    }
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').slice(1);
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      const rawTop = target.getBoundingClientRect().top + window.scrollY;
+      const top = targetId === 'home' ? 0 : rawTop - NAV_HEIGHT;
+      // Duration scales with distance so far sections don't feel like a rocket
+      const distance = Math.abs(top - window.scrollY);
+      const duration = Math.min(1200, Math.max(600, distance * 0.4));
+      easedScrollTo(top, duration);
+    });
   });
 
-  // Generate star ratings dynamically (supports half stars and ? ratings)
-  function renderStars() {
-    document.querySelectorAll('.skill-rating-item').forEach(item => {
-      const ratingStr = item.getAttribute('data-rating');
-      const container = item.querySelector('.skill-rating-stars');
-      if (!container || container.children.length > 0) return;
-
-      // Handle "?" rating
-      if (ratingStr === '?') {
-        container.innerHTML = '<span class="star question">? ? ? ? ?</span>';
-        return;
+  // ── Active nav highlight on scroll ──
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const activeLink = document.getElementById('nav-' + entry.target.id);
+        if (activeLink) activeLink.classList.add('active');
       }
-
-      const rating = parseFloat(ratingStr);
-      const fullStars = Math.floor(rating);
-      const hasHalf = (rating % 1) >= 0.5;
-      let html = '';
-
-      for (let i = 1; i <= 5; i++) {
-        if (i <= fullStars) {
-          html += '<span class="star filled">★</span>';
-        } else if (i === fullStars + 1 && hasHalf) {
-          html += '<span class="star half">☆</span>';
-        } else {
-          html += '<span class="star empty">☆</span>';
-        }
-      }
-      container.innerHTML = html;
     });
-  }
-  renderStars();
+  }, {
+    rootMargin: `-${NAV_HEIGHT}px 0px -50% 0px`,
+    threshold: 0
+  });
+  sections.forEach(section => navObserver.observe(section));
 
-  // Animate progress bars on page show
-  const origShowPage = showPage;
-  // Stars have a subtle stagger animation
-  function animateSkillStars() {
-    document.querySelectorAll('.skill-rating-item').forEach((item, idx) => {
-      item.style.opacity = '0';
-      item.style.transform = 'translateX(-10px)';
-      item.style.transition = 'all 0.4s ease';
-      setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateX(0)';
-      }, 80 * idx);
+  // ── Marquee always visible ──
+  const marquee = document.getElementById('marqueeStrip');
+  if (marquee) marquee.classList.add('visible');
+
+  // ══════════════════════════════
+  // SCROLL REVEAL — bidirectional (re-hides when scrolling back up)
+  // ══════════════════════════════
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      } else {
+        // Re-hide so it re-animates when scrolling back down
+        entry.target.classList.remove('visible');
+      }
     });
-  }
+  }, { threshold: 0.12 });
 
-  // Override showPage to trigger animations + curtain transition
-  let isTransitioning = false;
-  const _origShow = showPage;
-  showPage = function(id) {
-    // Prevent double-clicks during transition
-    if (isTransitioning) return;
+  document.querySelectorAll('.section-header, .timeline-item, .skill-card, .achievement-card, .vision-card, .swot-card, .skills-category-card, .contact-card').forEach(el => {
+    el.classList.add('reveal');
+    revealObserver.observe(el);
+  });
 
-    // Skip transition on initial load (home is already active)
-    const currentPage = document.querySelector('.page.active');
-    if (currentPage && currentPage.id === id) return;
+  // ══════════════════════════════
+  // PARALLAX — hero + about section
+  // ══════════════════════════════
+  const leaf1   = document.querySelector('.leaf-1');
+  const leaf2   = document.querySelector('.leaf-2');
+  const leaf3   = document.querySelector('.leaf-3');
+  const grid    = document.querySelector('.home-grid-pattern');
+  const heroContent = document.querySelector('.home-content');
+  const aboutSidebar = document.querySelector('.about-sidebar');
+  const aboutBio = document.querySelector('.about-bio');
 
-    isTransitioning = true;
-    const curtain = document.getElementById('transition-curtain');
+  function handleParallax() {
+    const scrollY = window.scrollY;
+    const homeH   = document.getElementById('home')?.offsetHeight || window.innerHeight;
 
-    // Phase 1: Curtain slides UP (scaleY 0 → 1, origin bottom)
-    curtain.style.transformOrigin = 'bottom';
-    curtain.style.transition = 'transform 0.35s cubic-bezier(0.7, 0, 0.3, 1)';
-    curtain.style.transform = 'scaleY(1)';
-
-    // Phase 2: At midpoint, switch the page
-    setTimeout(() => {
-      _origShow(id);
-
-      // Trigger page-specific animations
-      if (id === 'skills') {
-        setTimeout(animateSkillStars, 100);
-      }
-      if (id === 'home') {
-        setTimeout(animateHeroName, 100);
-      }
-
-      // Show/hide marquee strip
-      const marquee = document.getElementById('marqueeStrip');
-      if (marquee) {
-        if (id === 'home') {
-          marquee.classList.add('visible');
-        } else {
-          marquee.classList.remove('visible');
-        }
-      }
-
-      // Phase 3: Curtain slides AWAY (scaleY 1 → 0, origin top)
-      curtain.style.transformOrigin = 'top';
-      curtain.style.transition = 'transform 0.35s cubic-bezier(0.7, 0, 0.3, 1)';
-      curtain.style.transform = 'scaleY(0)';
-
-      setTimeout(() => {
-        isTransitioning = false;
-      }, 350);
-    }, 350);
-  };
-
-  // ── HERO NAME LETTER ANIMATION ──
-  function animateHeroName() {
-    const nameEl = document.querySelector('.home-name');
-    if (!nameEl || nameEl.dataset.split === 'true') {
-      // Already split — just re-trigger
-      if (nameEl && nameEl.dataset.split === 'true') {
-        // Reset all letters
-        nameEl.querySelectorAll('.letter').forEach(l => l.classList.remove('revealed'));
-        document.querySelector('.home-tag')?.classList.remove('revealed');
-        document.querySelector('.home-desc')?.classList.remove('revealed');
-        document.querySelector('.home-cta')?.classList.remove('revealed');
-        document.querySelector('.home-scroll-hint')?.classList.remove('revealed');
-        // Re-trigger after a frame
-        requestAnimationFrame(() => triggerHeroReveal(nameEl));
-      }
-      return;
+    // Hero parallax (leaves + grid + content)
+    if (scrollY <= homeH + 200) {
+      if (leaf1) leaf1.style.transform = `rotate(-30deg) translateY(${scrollY * 0.25}px)`;
+      if (leaf2) leaf2.style.transform = `rotate(20deg) translateY(${scrollY * 0.18}px)`;
+      if (leaf3) leaf3.style.transform = `rotate(10deg) translateY(${scrollY * 0.35}px)`;
+      if (grid)  grid.style.transform  = `translateY(${scrollY * 0.12}px)`;
+      if (heroContent) heroContent.style.transform = `translateY(${scrollY * 0.08}px)`;
     }
 
-    // Split letters
+    // About section parallax
+    const about = document.getElementById('about');
+    if (about) {
+      const aboutTop = about.getBoundingClientRect().top + scrollY;
+      const aboutOffset = scrollY - aboutTop;
+      if (aboutOffset > -window.innerHeight && aboutOffset < about.offsetHeight + 200) {
+        if (aboutSidebar) aboutSidebar.style.transform = `translateY(${aboutOffset * -0.06}px)`;
+        if (aboutBio) aboutBio.style.transform = `translateY(${aboutOffset * -0.03}px)`;
+      }
+    }
+  }
+
+  window.addEventListener('scroll', handleParallax, { passive: true });
+
+  // ══════════════════════════════
+  // HERO ANIMATION — triggers on scroll INTO view (not just on load)
+  // ══════════════════════════════
+  let heroAnimated = false;
+
+  function runHeroAnimation() {
+    const nameEl = document.querySelector('.home-name');
+    if (!nameEl) return;
+
+    // Reset everything first
+    document.querySelector('.home-tag')?.classList.remove('revealed');
+    document.querySelector('.home-desc')?.classList.remove('revealed');
+    document.querySelector('.home-cta')?.classList.remove('revealed');
+    document.querySelector('.home-scroll-hint')?.classList.remove('revealed');
+
+    if (nameEl.dataset.split === 'true') {
+      // Already split — just re-trigger letter reveal
+      nameEl.querySelectorAll('.letter').forEach(l => l.classList.remove('revealed'));
+      requestAnimationFrame(() => triggerHeroReveal(nameEl));
+    } else {
+      animateHeroName();
+    }
+  }
+
+  // Watch home section — re-trigger animation every time it enters viewport
+  const heroObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        runHeroAnimation();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const homeSection = document.getElementById('home');
+  if (homeSection) heroObserver.observe(homeSection);
+
+  function animateHeroName() {
+    const nameEl = document.querySelector('.home-name');
+    if (!nameEl || nameEl.dataset.split === 'true') return;
+
     nameEl.dataset.split = 'true';
     const lines = nameEl.childNodes;
     let newHTML = '';
 
     lines.forEach(node => {
       if (node.nodeType === 3) {
-        // Text node ("Sahil")
         const text = node.textContent.trim();
         if (!text) return;
         text.split('').forEach(ch => {
-          if (ch === ' ') {
-            newHTML += ' ';
-          } else {
-            newHTML += `<span class="letter-wrap"><span class="letter" style="color:white">${ch}</span></span>`;
-          }
+          newHTML += ch === ' ' ? ' ' : `<span class="letter-wrap"><span class="letter" style="color:white">${ch}</span></span>`;
         });
       } else if (node.nodeType === 1 && node.tagName === 'SPAN') {
-        // The <span>Singh<span>.</span></span> element
         newHTML += '<span style="display:block; color:var(--green-accent);">';
         node.childNodes.forEach(child => {
           if (child.nodeType === 3) {
             child.textContent.split('').forEach(ch => {
-              if (ch === ' ') {
-                newHTML += ' ';
-              } else {
-                newHTML += `<span class="letter-wrap"><span class="letter">${ch}</span></span>`;
-              }
+              newHTML += ch === ' ' ? ' ' : `<span class="letter-wrap"><span class="letter">${ch}</span></span>`;
             });
           } else if (child.nodeType === 1) {
-            // The period span
             newHTML += `<span class="letter-wrap"><span class="letter" style="color:var(--green-accent)">${child.textContent}</span></span>`;
           }
         });
@@ -2032,145 +2059,98 @@
 
   function triggerHeroReveal(nameEl) {
     const letters = nameEl.querySelectorAll('.letter');
-    letters.forEach((letter, i) => {
-      setTimeout(() => {
-        letter.classList.add('revealed');
-      }, i * 50);
-    });
-
-    // After all letters finish, reveal tag, desc, cta
-    const totalLetterTime = letters.length * 50 + 400;
-
-    setTimeout(() => {
-      document.querySelector('.home-tag')?.classList.add('revealed');
-    }, totalLetterTime);
-
-    setTimeout(() => {
-      document.querySelector('.home-desc')?.classList.add('revealed');
-    }, totalLetterTime + 200);
-
-    setTimeout(() => {
-      document.querySelector('.home-cta')?.classList.add('revealed');
-    }, totalLetterTime + 400);
-
-    setTimeout(() => {
-      document.querySelector('.home-scroll-hint')?.classList.add('revealed');
-    }, totalLetterTime + 600);
+    letters.forEach((l, i) => setTimeout(() => l.classList.add('revealed'), i * 50));
+    const t = letters.length * 50 + 400;
+    setTimeout(() => document.querySelector('.home-tag')?.classList.add('revealed'), t);
+    setTimeout(() => document.querySelector('.home-desc')?.classList.add('revealed'), t + 200);
+    setTimeout(() => document.querySelector('.home-cta')?.classList.add('revealed'), t + 400);
+    setTimeout(() => document.querySelector('.home-scroll-hint')?.classList.add('revealed'), t + 600);
   }
 
-  // Run on initial load
+  // Run on initial load too
   animateHeroName();
 
-  // ── AMBIENT BLOB (home page only) ──
+  // ══════════════════════════════
+  // AMBIENT BLOB
+  // ══════════════════════════════
   (function() {
     const blob = document.getElementById('ambientBlob');
     if (!blob) return;
-    let blobX = window.innerWidth / 2;
-    let blobY = window.innerHeight / 2;
+    let blobX = window.innerWidth / 2, blobY = window.innerHeight / 2;
     let targetX = blobX, targetY = blobY;
-
-    document.addEventListener('mousemove', e => {
-      targetX = e.clientX;
-      targetY = e.clientY;
-    });
-
+    document.addEventListener('mousemove', e => { targetX = e.clientX; targetY = e.clientY; });
     function animateBlob() {
-      const ease = 0.05;
-      blobX += (targetX - blobX) * ease;
-      blobY += (targetY - blobY) * ease;
-      // Only update when home is active
-      const home = document.getElementById('home');
-      if (home && home.classList.contains('active')) {
+      blobX += (targetX - blobX) * 0.05;
+      blobY += (targetY - blobY) * 0.05;
+      if (window.scrollY < window.innerHeight) {
         blob.style.left = blobX + 'px';
-        blob.style.top = blobY + 'px';
+        blob.style.top  = blobY + 'px';
       }
       requestAnimationFrame(animateBlob);
     }
     requestAnimationFrame(animateBlob);
   })();
 
-  // ── CUSTOM CURSOR SYSTEM ──
-  (function() {
-    // Skip on touch devices
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
-
-    // Create cursor elements
-    const dot = document.createElement('div');
-    dot.className = 'cursor-dot';
-    const ring = document.createElement('div');
-    ring.className = 'cursor-ring';
-    document.body.appendChild(dot);
-    document.body.appendChild(ring);
-
-    // Mouse position tracking
-    let mouseX = -100, mouseY = -100;
-    let ringX = -100, ringY = -100;
-
-    document.addEventListener('mousemove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      // Dot follows instantly
-      dot.style.left = mouseX + 'px';
-      dot.style.top = mouseY + 'px';
+  // ══════════════════════════════
+  // STAR RATINGS
+  // ══════════════════════════════
+  function renderStars() {
+    document.querySelectorAll('.skill-rating-item').forEach(item => {
+      const ratingStr = item.getAttribute('data-rating');
+      const container = item.querySelector('.skill-rating-stars');
+      if (!container || container.children.length > 0) return;
+      if (ratingStr === '?') { container.innerHTML = '<span class="star question">? ? ? ? ?</span>'; return; }
+      const rating = parseFloat(ratingStr);
+      const fullStars = Math.floor(rating);
+      const hasHalf = (rating % 1) >= 0.5;
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= fullStars) html += '<span class="star filled">★</span>';
+        else if (i === fullStars + 1 && hasHalf) html += '<span class="star half">☆</span>';
+        else html += '<span class="star empty">☆</span>';
+      }
+      container.innerHTML = html;
     });
+  }
+  renderStars();
 
-    // Ring follows with lerp delay via requestAnimationFrame
+  // ══════════════════════════════
+  // CUSTOM CURSOR
+  // ══════════════════════════════
+  (function() {
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+    const dot = document.createElement('div'); dot.className = 'cursor-dot';
+    const ring = document.createElement('div'); ring.className = 'cursor-ring';
+    document.body.appendChild(dot); document.body.appendChild(ring);
+    let mouseX = -100, mouseY = -100, ringX = -100, ringY = -100;
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
+    });
     function animateRing() {
-      const ease = 0.12;
-      ringX += (mouseX - ringX) * ease;
-      ringY += (mouseY - ringY) * ease;
-      ring.style.left = ringX + 'px';
-      ring.style.top = ringY + 'px';
+      ringX += (mouseX - ringX) * 0.12; ringY += (mouseY - ringY) * 0.12;
+      ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
       requestAnimationFrame(animateRing);
     }
     requestAnimationFrame(animateRing);
-
-    // Hover effect on interactive elements
-    const hoverTargets = document.querySelectorAll(
-      '.nav-links a, .vision-card, .swot-card, .achievement-card, .home-cta, .skill-card, .skills-category-card, .hobby-pill, .chip, .timeline-item'
-    );
-
-    hoverTargets.forEach(el => {
+    document.querySelectorAll('.nav-links a, .vision-card, .swot-card, .achievement-card, .home-cta, .skill-card, .skills-category-card, .hobby-pill, .chip, .timeline-item').forEach(el => {
       el.style.cursor = 'none';
-      el.addEventListener('mouseenter', () => {
-        dot.classList.add('hovering');
-        ring.classList.add('hovering');
-      });
-      el.addEventListener('mouseleave', () => {
-        dot.classList.remove('hovering');
-        ring.classList.remove('hovering');
-      });
+      el.addEventListener('mouseenter', () => { dot.classList.add('hovering'); ring.classList.add('hovering'); });
+      el.addEventListener('mouseleave', () => { dot.classList.remove('hovering'); ring.classList.remove('hovering'); });
     });
-
-    // Magnetic pull on .home-cta
     const cta = document.querySelector('.home-cta');
     if (cta) {
       cta.style.transition = 'transform 0.3s ease';
       cta.addEventListener('mousemove', e => {
-        const rect = cta.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = (e.clientX - cx) * 0.15;
-        const dy = (e.clientY - cy) * 0.15;
-        const maxPull = 6;
-        const px = Math.max(-maxPull, Math.min(maxPull, dx));
-        const py = Math.max(-maxPull, Math.min(maxPull, dy));
-        cta.style.transform = `translate(${px}px, ${py}px)`;
+        const r = cta.getBoundingClientRect();
+        const dx = Math.max(-6, Math.min(6, (e.clientX - r.left - r.width/2) * 0.15));
+        const dy = Math.max(-6, Math.min(6, (e.clientY - r.top - r.height/2) * 0.15));
+        cta.style.transform = `translate(${dx}px,${dy}px)`;
       });
-      cta.addEventListener('mouseleave', () => {
-        cta.style.transform = 'translate(0, 0)';
-      });
+      cta.addEventListener('mouseleave', () => { cta.style.transform = 'translate(0,0)'; });
     }
-
-    // Hide cursor when leaving window
-    document.addEventListener('mouseleave', () => {
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
-    });
-    document.addEventListener('mouseenter', () => {
-      dot.style.opacity = '1';
-      ring.style.opacity = '0.6';
-    });
+    document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
+    document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.style.opacity='0.6'; });
   })();
 </script>
 </body>
