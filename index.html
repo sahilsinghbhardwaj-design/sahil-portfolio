@@ -1145,6 +1145,77 @@
   }
 
   /* ══════════════════════════════
+     CONTACT PAGE
+  ══════════════════════════════ */
+  .contact-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .contact-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    display: block;
+  }
+
+  .contact-card:hover {
+    border-color: var(--green-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,201,110,0.12);
+  }
+
+  .contact-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+
+  .contact-card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .contact-card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .contact-subtext {
+    font-size: 1.05rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 600px;
+    margin-bottom: 48px;
+  }
+
+  .contact-closing {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 560px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 768px) {
+    .contact-cards { grid-template-columns: 1fr; }
+  }
+
+  /* ══════════════════════════════
      FOOTER
   ══════════════════════════════ */
   footer {
@@ -1185,6 +1256,7 @@
     <li><a href="javascript:void(0)" onclick="showPage('vision')" id="nav-vision">Vision</a></li>
     <li><a href="javascript:void(0)" onclick="showPage('skills')" id="nav-skills">Skills</a></li>
     <li><a href="javascript:void(0)" onclick="showPage('swot')" id="nav-swot">SWOT</a></li>
+    <li><a href="javascript:void(0)" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
   </ul>
 </nav>
 
@@ -1472,6 +1544,61 @@
       <p>"The future belongs to those who prepare for it today — and I'm preparing at the intersection of food science and the digital world."</p>
       <cite>— Sahil Singh</cite>
     </div>
+
+    <!-- Certifications Roadmap -->
+    <div style="margin-top: 64px;">
+      <div class="section-kicker" style="color: rgba(255,255,255,0.5); margin-bottom: 8px;">🎯 Dream Certifications — My Roadmap</div>
+      <p style="color: rgba(255,255,255,0.4); font-size: 0.95rem; margin-bottom: 36px; max-width: 560px;">
+        Certifications I am actively working toward, planned year by year.
+      </p>
+
+      <div class="vision-grid">
+        <div class="vision-card">
+          <div class="vision-card-icon">🥗</div>
+          <div class="vision-card-label" style="color: var(--green-accent);">Planned</div>
+          <div class="vision-card-title">FoSTaC (FSSAI) · 2nd Year</div>
+          <div class="vision-card-text">
+            Food Safety Training & Certification by FSSAI — the gold standard for food safety compliance in India.
+          </div>
+        </div>
+
+        <div class="vision-card">
+          <div class="vision-card-icon">⚠️</div>
+          <div class="vision-card-label" style="color: var(--green-accent);">Planned</div>
+          <div class="vision-card-title">HACCP · 2nd Year</div>
+          <div class="vision-card-text">
+            Hazard Analysis Critical Control Points — internationally recognised food safety management certification.
+          </div>
+        </div>
+
+        <div class="vision-card">
+          <div class="vision-card-icon">📊</div>
+          <div class="vision-card-label" style="color: var(--green-accent);">Planned</div>
+          <div class="vision-card-title">Six Sigma Yellow & Green Belt</div>
+          <div class="vision-card-text">
+            Quality management and process improvement — applicable across food manufacturing and operations.
+          </div>
+        </div>
+
+        <div class="vision-card">
+          <div class="vision-card-icon">🛡️</div>
+          <div class="vision-card-label" style="color: var(--green-accent);">Planned</div>
+          <div class="vision-card-title">NEBOSH · Final Year</div>
+          <div class="vision-card-text">
+            International health and safety qualification — adding occupational safety expertise to my food tech profile.
+          </div>
+        </div>
+
+        <div class="vision-card">
+          <div class="vision-card-icon">✅</div>
+          <div class="vision-card-label" style="color: var(--green-accent);">Planned</div>
+          <div class="vision-card-title">Lead Auditor ISO 22000 · 3rd Year</div>
+          <div class="vision-card-text">
+            Food Safety Management Systems auditing — positioning myself as a quality assurance leader.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1676,6 +1803,43 @@
   </div>
 </section>
 
+<!-- ═══════════════════════
+     CONTACT
+═══════════════════════ -->
+<section class="page" id="contact">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-kicker">07 — Get In Touch</div>
+      <h2 class="section-title">Let's <em>Connect</em></h2>
+    </div>
+
+    <p class="contact-subtext">
+      Open to internships, collaborations, and conversations about food-tech innovation, EdTech, or anything ambitious.
+    </p>
+
+    <div class="contact-cards">
+      <a href="mailto:sahilsinghbhardwaj@gmail.com" class="contact-card">
+        <div class="contact-card-label">📧 Email</div>
+        <div class="contact-card-value">sahilsinghbhardwaj@gmail.com</div>
+      </a>
+
+      <a href="https://instagram.com/s.ahil_singhh" target="_blank" rel="noopener" class="contact-card">
+        <div class="contact-card-label">📸 Instagram</div>
+        <div class="contact-card-value">@s.ahil_singhh</div>
+      </a>
+
+      <div class="contact-card disabled">
+        <div class="contact-card-label">💼 LinkedIn</div>
+        <div class="contact-card-value">Coming Soon</div>
+      </div>
+    </div>
+
+    <p class="contact-closing">
+      Whether it's an opportunity, a collaboration, or just a conversation — I'm always open. Let's build something meaningful.
+    </p>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <p>Designed & built with 💚 &nbsp;|&nbsp; <strong>Sahil Singh</strong> &nbsp;|&nbsp; Food Technology Portfolio &nbsp;|&nbsp; Lovely Professional University</p>
@@ -1695,7 +1859,7 @@
   }
 
   // Keyboard nav (optional nice touch)
-  const pages = ['home','about','academics','achievements','vision','skills','swot'];
+  const pages = ['home','about','academics','achievements','vision','skills','swot','contact'];
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') {
       const cur = pages.findIndex(p => document.getElementById(p).classList.contains('active'));
